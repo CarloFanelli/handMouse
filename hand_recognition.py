@@ -11,6 +11,11 @@ mp_drawing = mp.solutions.drawing_utils
 #webcam
 cap = cv2.VideoCapture(0)
 
+cv2.namedWindow('Hand Tracking', cv2.WND_PROP_FULLSCREEN)
+cv2.setWindowProperty('Hand Tracking', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+screen_width = cv2.getWindowImageRect('Hand Tracking')[2]
+screen_heigth = cv2.getWindowImageRect('Hand Tracking')[3]
+
 while cap.isOpened():
     success,img = cap.read()
     if not success:
@@ -28,6 +33,10 @@ while cap.isOpened():
     if result.multi_hand_landmarks:
         for hand_landmarks in result.multi_hand_landmarks:
             mp_drawing.draw_landmarks(image,hand_landmarks,mp_hands.HAND_CONNECTIONS)
+
+    #full screen effetto specchio
+    image = cv2.resize(image,(screen_width,screen_heigth))
+    image = cv2.flip(image,1)
 
     #MOSTRO L'immagine
     cv2.imshow('hands',image)

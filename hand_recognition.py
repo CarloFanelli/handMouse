@@ -11,8 +11,8 @@ mp_drawing = mp.solutions.drawing_utils
 #webcam
 cap = cv2.VideoCapture(0)
 
-cv2.namedWindow('Hand Tracking', cv2.WND_PROP_FULLSCREEN)
-cv2.setWindowProperty('Hand Tracking', cv2.WND_PROP_FULLSCREEN, cv2.WINDOW_FULLSCREEN)
+cv2.namedWindow('Hand Tracking', cv2.WINDOW_NORMAL)
+cv2.setWindowProperty('Hand Tracking', cv2.WINDOW_AUTOSIZE, cv2.WINDOW_NORMAL)
 screen_width = cv2.getWindowImageRect('Hand Tracking')[2]
 screen_heigth = cv2.getWindowImageRect('Hand Tracking')[3]
 
@@ -39,7 +39,7 @@ while cap.isOpened():
     image = cv2.flip(image,1)
 
     #MOSTRO L'immagine
-    cv2.imshow('hands',image)
+    cv2.imshow('Hand Tracking',image)
 
     #con esc chiudo
     if cv2.waitKey(5) & 0xFF == 27:

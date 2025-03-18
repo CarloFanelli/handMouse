@@ -21,10 +21,14 @@ options = vision.GestureRecognizerOptions(
 
 gesture_recognizer = vision.GestureRecognizer.create_from_options(options)
 
+
+
 # Per disegnare i landmark
 mp_drawing = mp.solutions.drawing_utils
 mp_drawing_styles = mp.solutions.drawing_styles
 mp_hands = mp.solutions.hands
+
+
 
 # Webcam
 cap = cv2.VideoCapture(0)
@@ -33,6 +37,8 @@ cv2.namedWindow('Hand Tracking', cv2.WINDOW_NORMAL)
 cv2.setWindowProperty('Hand Tracking', cv2.WINDOW_AUTOSIZE, cv2.WINDOW_NORMAL)
 screen_width = pyautogui.size().width
 screen_height = pyautogui.size().height
+
+
 
 # Variabili globali
 gesture_name = ''
@@ -47,6 +53,9 @@ class HandPoint:
 indexFingerTip = HandPoint()
 thumbFingerTip = HandPoint()
 
+
+
+
 # Aggiorna le informazioni sul gesto riconosciuto
 def update_gesture_info(gesture_result):
     global gesture_name, score
@@ -55,6 +64,9 @@ def update_gesture_info(gesture_result):
             if gesture and len(gesture) > 0:
                 gesture_name = gesture[0].category_name
                 score = gesture[0].score
+
+
+
 
 # Aggiorna le posizioni dei punti della mano
 def update_hand_points(gesture_result):
@@ -95,6 +107,16 @@ def draw_landmarks(image, hand_landmarks):
 
 
 
+# Disegna una linea tra due punti
+def draw_line_between_points(image, point1, point2):
+    height, width, _ = image.shape
+    start_point = (int((1- point1.x) * width), int(point1.y * height))
+    end_point = (int((1-point2.x) * width), int(point2.y * height))
+    cv2.line(image, start_point, end_point, (255, 0, 0), 3)
+
+
+
+
 # Elabora un frame dell'immagine per il riconoscimento dei gesti
 def process_frame(image):
     image_rgb = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
@@ -122,6 +144,7 @@ def display_info(image):
 
 
 
+
 #code
 while cap.isOpened():
     success, img = cap.read()
@@ -134,6 +157,7 @@ while cap.isOpened():
     if gesture_result.hand_landmarks:
         for hand_landmarks in gesture_result.hand_landmarks:
             draw_landmarks(image_display, hand_landmarks)
+        draw_line_between_points(image_display, thumbFingerTip, indexFingerTip)
 
     image_display = cv2.resize(image_display, (screen_width, screen_height))
     image_display = cv2.flip(image_display, 1)

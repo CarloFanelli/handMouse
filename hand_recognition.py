@@ -52,6 +52,7 @@ class HandPoint:
 
 indexFingerTip = HandPoint()
 thumbFingerTip = HandPoint()
+indexFingerBase = HandPoint()
 
 
 
@@ -70,7 +71,7 @@ def update_gesture_info(gesture_result):
 
 # Aggiorna le posizioni dei punti della mano
 def update_hand_points(gesture_result):
-    global indexFingerTip, thumbFingerTip
+    global indexFingerTip, thumbFingerTip,indexFingerBase
     if gesture_result.hand_landmarks:
         for hand_landmarks in gesture_result.hand_landmarks:
             if hand_landmarks and len(hand_landmarks) > 8:
@@ -83,6 +84,11 @@ def update_hand_points(gesture_result):
                     x=1 - hand_landmarks[4].x,
                     y=hand_landmarks[4].y,
                     z=hand_landmarks[4].z
+                )
+                indexFingerBase = HandPoint(
+                    x=1 - hand_landmarks[5].x,
+                    y=hand_landmarks[5].y,
+                    z=hand_landmarks[5].z
                 )
 
 
@@ -112,7 +118,7 @@ def draw_line_between_points(image, point1, point2):
     height, width, _ = image.shape
     start_point = (int((1- point1.x) * width), int(point1.y * height))
     end_point = (int((1-point2.x) * width), int(point2.y * height))
-    cv2.line(image, start_point, end_point, (255, 0, 0), 3)
+    cv2.line(image, start_point, end_point,(255, 255, 255), 3) #edit here to pass the color to the function
 
 
 
@@ -158,6 +164,7 @@ while cap.isOpened():
         for hand_landmarks in gesture_result.hand_landmarks:
             draw_landmarks(image_display, hand_landmarks)
         draw_line_between_points(image_display, thumbFingerTip, indexFingerTip)
+        draw_line_between_points(image_display, thumbFingerTip, indexFingerBase)
 
     image_display = cv2.resize(image_display, (screen_width, screen_height))
     image_display = cv2.flip(image_display, 1)

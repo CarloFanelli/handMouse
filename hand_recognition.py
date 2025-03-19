@@ -42,6 +42,7 @@ screen_height = pyautogui.size().height
 
 # Variabili globali
 gesture_name = ''
+action_name = ''
 score = 0
 
 class HandPoint:
@@ -67,6 +68,29 @@ def update_gesture_info(gesture_result):
                 score = gesture[0].score
 
 
+
+#verifica il pinch e disegna un punto nel centro del pinch
+def checkPinch():
+    distance = np.sqrt((indexFingerTip.x - thumbFingerTip.x)**2 + (indexFingerTip.y - thumbFingerTip.y)**2 + (indexFingerTip.z - thumbFingerTip.z)**2)
+    threshold = 0.06  # Puoi regolare questo valore in base alla precisione desiderata
+    is_pinching = distance < threshold
+
+    # Calcola il centro della distanza
+    center_x = 1- ((indexFingerTip.x + thumbFingerTip.x) / 2)
+    center_y = (indexFingerTip.y + thumbFingerTip.y) / 2
+    center_z = (indexFingerTip.z + thumbFingerTip.z) / 2
+    handPoint = HandPoint(center_x, center_y, center_z)
+
+    return is_pinching, distance,handPoint
+
+
+
+# Disegna un cerchio al centro della distanza tra indice e pollice
+def draw_circle_at_center(image, center, distance):
+    height, width, _ = image.shape
+    center_point = (int((1 - center.x) * width), int(center.y * height))
+    radius = int(distance * 600) 
+    cv2.circle(image, center_point, radius, (0, 0, 255), 2)
 
 
 # Aggiorna le posizioni dei punti della mano
@@ -148,6 +172,12 @@ def display_info(image):
     
     cv2.putText(image, f'Gesto: {gesture_name} ({score:.2f})', (10, 120), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
 
+    isPinching,distance,handPoint = checkPinch()
+
+    if not isPinching:
+        draw_circle_at_center(image_display,handPoint,(distance))
+
+    cv2.putText(image, f'pinch: {isPinching} - {distance}', (width-20, height-30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
 
 
 
@@ -160,6 +190,9 @@ while cap.isOpened():
 
     gesture_result = process_frame(img)
     image_display = img.copy()
+    height, width, _ = image_display.shape
+
+
     if gesture_result.hand_landmarks:
         for hand_landmarks in gesture_result.hand_landmarks:
             draw_landmarks(image_display, hand_landmarks)
@@ -172,7 +205,6 @@ while cap.isOpened():
     cv2.imshow('Hand Tracking', image_display)
 
     if indexFingerTip.x and indexFingerTip.y and indexFingerTip.z:
-        height, width, _ = image_display.shape
         pyautogui.moveTo((indexFingerTip.x) * screen_width, (indexFingerTip.y) * screen_height)
 
     if cv2.waitKey(5) & 0xFF == 27:

@@ -31,7 +31,7 @@ pip install opencv-python mediapipe pyautogui numpy
 1. Clona il repository:
 
 ```bash
-git clone https://github.com/tuo-username/hand-tracking-mediapipe.git
+git clone https://github.com/CarloFanelli/handMouse.git
 cd hand-tracking-mediapipe
 ```
 

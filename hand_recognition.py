@@ -172,7 +172,8 @@ while cap.isOpened():
     cv2.imshow('Hand Tracking', image_display)
 
     if indexFingerTip.x and indexFingerTip.y and indexFingerTip.z:
-        pyautogui.moveTo(indexFingerTip.x * screen_width, indexFingerTip.y * screen_height)
+        height, width, _ = image_display.shape
+        pyautogui.moveTo((indexFingerTip.x) * screen_width, (indexFingerTip.y) * screen_height)
 
     if cv2.waitKey(5) & 0xFF == 27:
         break

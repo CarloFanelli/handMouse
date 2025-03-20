@@ -1,4 +1,5 @@
 import os
+import random
 import cv2
 import mediapipe as mp
 from mediapipe.tasks import python
@@ -54,6 +55,7 @@ class HandPoint:
 indexFingerTip = HandPoint()
 thumbFingerTip = HandPoint()
 indexFingerBase = HandPoint()
+middleFingerTip = HandPoint()
 
 
 
@@ -84,6 +86,20 @@ def checkPinch():
     return is_pinching, distance,handPoint
 
 
+#fai click (punta del pollice tocca punta del medio)
+def click():
+    distance = np.sqrt((middleFingerTip.x - thumbFingerTip.x)**2 + (middleFingerTip.y - thumbFingerTip.y)**2 + (middleFingerTip.z - thumbFingerTip.z)**2)
+    threshold = 0.045  # Puoi regolare questo valore in base alla precisione desiderata
+    clicking = distance < threshold
+
+    # Calcola il centro della distanza
+    center_x = 1- ((middleFingerTip.x + thumbFingerTip.x) / 2)
+    center_y = (middleFingerTip.y + thumbFingerTip.y) / 2
+    center_z = (middleFingerTip.z + thumbFingerTip.z) / 2
+    handPoint = HandPoint(center_x, center_y, center_z)
+
+    return clicking, distance,handPoint
+
 
 # Disegna un cerchio al centro della distanza tra indice e pollice
 def draw_circle_at_center(image, center, distance):
@@ -95,7 +111,7 @@ def draw_circle_at_center(image, center, distance):
 
 # Aggiorna le posizioni dei punti della mano
 def update_hand_points(gesture_result):
-    global indexFingerTip, thumbFingerTip,indexFingerBase
+    global indexFingerTip, thumbFingerTip,indexFingerBase,middleFingerTip
     if gesture_result.hand_landmarks:
         for hand_landmarks in gesture_result.hand_landmarks:
             if hand_landmarks and len(hand_landmarks) > 8:
@@ -113,6 +129,11 @@ def update_hand_points(gesture_result):
                     x=1 - hand_landmarks[5].x,
                     y=hand_landmarks[5].y,
                     z=hand_landmarks[5].z
+                )
+                middleFingerTip = HandPoint(
+                    x=1 - hand_landmarks[12].x,
+                    y=hand_landmarks[12].y,
+                    z=hand_landmarks[12].z
                 )
 
 
@@ -174,10 +195,24 @@ def display_info(image):
 
     isPinching,distance,handPoint = checkPinch()
 
+
+
     if not isPinching:
         draw_circle_at_center(image_display,handPoint,(distance))
 
-    cv2.putText(image, f'pinch: {isPinching} - {distance}', (width-20, height-30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+    #debug pinch
+    # cv2.putText(image, f'pinch: {isPinching} - {distance}', (width-20, height-30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+
+    #debug click
+    clicking, distance2,handPoint = click()
+
+    cv2.putText(image, f'click: {clicking} - {distance2}', (width-20, height-30), cv2.FONT_HERSHEY_SIMPLEX, 1, (0, 255, 0), 2, cv2.LINE_AA)
+
+
+#verifica se il gesto è pointing_up
+def isPointing():
+    return gesture_name == 'Pointing_Up'
+
 
 
 
@@ -196,16 +231,26 @@ while cap.isOpened():
     if gesture_result.hand_landmarks:
         for hand_landmarks in gesture_result.hand_landmarks:
             draw_landmarks(image_display, hand_landmarks)
-        draw_line_between_points(image_display, thumbFingerTip, indexFingerTip)
-        draw_line_between_points(image_display, thumbFingerTip, indexFingerBase)
+        # draw_line_between_points(image_display, thumbFingerTip, indexFingerTip)
+        # draw_line_between_points(image_display, thumbFingerTip, indexFingerBase)
+        draw_line_between_points(image_display, thumbFingerTip, middleFingerTip)
 
     image_display = cv2.resize(image_display, (screen_width, screen_height))
     image_display = cv2.flip(image_display, 1)
     display_info(image_display)
     cv2.imshow('Hand Tracking', image_display)
 
-    if indexFingerTip.x and indexFingerTip.y and indexFingerTip.z:
-        pyautogui.moveTo((indexFingerTip.x) * screen_width, (indexFingerTip.y) * screen_height)
+    if indexFingerTip.x and indexFingerTip.y and indexFingerTip.z and isPointing():
+        # pyautogui.moveTo((indexFingerTip.x) * screen_width, (indexFingerTip.y) * screen_height)
+
+        clicking, distance,handPoint = click()
+        if clicking:
+            print('click',distance)
+            # pyautogui.click()
+        else:
+            pass
+    else:
+        pass
 
     if cv2.waitKey(5) & 0xFF == 27:
         break

@@ -89,7 +89,7 @@ def checkPinch():
 #fai click (punta del pollice tocca punta del medio)
 def click():
     distance = np.sqrt((middleFingerTip.x - thumbFingerTip.x)**2 + (middleFingerTip.y - thumbFingerTip.y)**2 + (middleFingerTip.z - thumbFingerTip.z)**2)
-    threshold = 0.045  # Puoi regolare questo valore in base alla precisione desiderata
+    threshold = 0.045  # regolare questo valore in base alla precisione desiderata
     clicking = distance < threshold
 
     # Calcola il centro della distanza

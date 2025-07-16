@@ -9,7 +9,7 @@ import pyautogui
 import numpy as np
 
 # Configurazione iniziale
-os.add_dll_directory(r'C:\Users\CarloFanelli\AppData\Local\Programs\Python\Python312\Lib\site-packages\mediapipe\python')
+# os.add_dll_directory(r'C:\Users\CarloFanelli\AppData\Local\Programs\Python\Python312\Lib\site-packages\mediapipe\python')
 
 model_path = './gesture_recognizer.task'
 base_options = python.BaseOptions(model_asset_path=model_path)

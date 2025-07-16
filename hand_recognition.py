@@ -214,6 +214,19 @@ def isPointing():
     return gesture_name == 'Pointing_Up'
 
 
+#disegna il quadrato in cui muovere la mano
+def drawSquare(image):
+    cv2.line(image, (100,100), (100,100), (255, 0, 0), 5)
+    cv2.line(image, (100,300), (100,300), (255, 0, 0), 5)
+    cv2.line(image, (200,200), (200,200), (0, 255, 0), 5)
+    cv2.line(image, (250,250), (250,250), (0, 255, 0), 5)
+    cv2.line(image, (300,300), (300,300), (0, 0, 255), 5)
+    # cv2.rectangle(image,(100,100),(200,200),(100,100,100),2)
+    # cv2.rectangle(image,(200,200),(300,300),(100,100,100),2)
+    # cv2.rectangle(image,(300,300),(100,100),(100,100,100),2)
+    # cv2.rectangle(image,(200,100),(300,200),(100,100,100),2)
+    
+
 
 
 #code
@@ -226,6 +239,7 @@ while cap.isOpened():
     gesture_result = process_frame(img)
     image_display = img.copy()
     height, width, _ = image_display.shape
+    drawSquare(image_display)
 
 
     if gesture_result.hand_landmarks:
@@ -252,7 +266,7 @@ while cap.isOpened():
     else:
         pass
 
-    if cv2.waitKey(5) & 0xFF == 27:
+    if cv2.waitKey(2) & 0xFF == 27:
         break
 
 cap.release()

@@ -218,12 +218,29 @@ def isPointing():
 def drawSquare(image):
 
     # cv2.line(image, (x,y), (x,y), (255, 0, 0), 5)
+    cv2.rectangle(image,(100,100),(250,250),(100,100,100),2)
+    cv2.rectangle(image,(250,100),(400,250),(100,100,100),2)
+    cv2.rectangle(image,(250,250),(400,400),(100,100,100),2)
+    cv2.rectangle(image,(250,250),(100,400),(100,100,100),2)
+    cv2.rectangle(image,(175,175),(325,325),(250,0,0),2)
+    # cv2.rectangle(image,(400,100),(250,250),(100,100,100),2)
     
-    cv2.line(image, (100,100), (100,100), (255, 0, 0), 5)
-    cv2.line(image, (100,300), (100,300), (255, 0, 0), 5)
-    cv2.line(image, (200,200), (200,200), (0, 255, 0), 5)
+    cv2.line(image, (100,100), (100,100), (0, 255, 0), 5)
+    cv2.line(image, (100,250), (100,250), (0, 255, 0), 5)
+    cv2.line(image, (100,400), (100,400), (0, 255, 0), 5)
+    
+    cv2.line(image, (400,100), (400,100), (0, 255, 0), 5)
+    cv2.line(image, (250,100), (250,100), (0, 255, 0), 5)
+    cv2.line(image, (400,400), (400,400), (0, 255, 0), 5)
+
+    cv2.line(image, (400,250), (400,250), (0, 255, 0), 5)
+    cv2.line(image, (250,400), (250,400), (0, 255, 0), 5)
+
     cv2.line(image, (250,250), (250,250), (0, 255, 0), 5)
-    cv2.line(image, (300,300), (300,300), (0, 0, 255), 5)
+
+    # cv2.line(image, (200,200), (200,200), (0, 255, 0), 5)
+    # cv2.line(image, (250,250), (250,250), (0, 255, 0), 5)
+    # cv2.line(image, (300,300), (300,300), (0, 0, 255), 5)
     
     # cv2.rectangle(image,(100,100),(200,200),(100,100,100),2)
     # cv2.rectangle(image,(200,200),(300,300),(100,100,100),2)
@@ -231,7 +248,7 @@ def drawSquare(image):
     # cv2.rectangle(image,(200,100),(300,200),(100,100,100),2)
     
 
-
+is_blurred = True
 
 #code
 while cap.isOpened():
@@ -243,6 +260,13 @@ while cap.isOpened():
     gesture_result = process_frame(img)
     image_display = img.copy()
     height, width, _ = image_display.shape
+
+    if is_blurred:
+        overlay = image_display.copy()
+        cv2.rectangle(overlay, (0, 0), (width, height), (0, 0, 0), -1)
+        alpha = 1  # Opacità (1 = completamente nero)
+        cv2.addWeighted(overlay, alpha, image_display, 1 - alpha, 0, image_display)
+
     drawSquare(image_display)
 
 
@@ -272,6 +296,12 @@ while cap.isOpened():
 
     if cv2.waitKey(2) & 0xFF == 27:
         break
+
+    # key = cv2.waitKey(2) & 0xFF
+    # if key == 27:  # ESC per uscire
+    #     break
+    # elif key == ord(' '):  # Barra spaziatrice per oscurare/ripristinare
+    #     is_blurred = not is_blurred
 
 cap.release()
 cv2.destroyAllWindows()

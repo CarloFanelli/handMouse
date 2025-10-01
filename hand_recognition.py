@@ -216,13 +216,28 @@ def isPointing():
 
 #disegna il quadrato in cui muovere la mano
 def drawSquare(image):
+    starting_point_x = int(100)
+    starting_point_y = int(100)
+    size = 300
+
+    #calc
+    mid_point_x = int((starting_point_x + size)/2)
+    end_point_x = int((starting_point_x + size))
+    mid_point_y = int((starting_point_y + size)/2)
+    end_point_y = int((starting_point_y + size))
+
+    cv2.rectangle(image,(starting_point_x,starting_point_y),(mid_point_x,mid_point_y),(100,100,100),2)
+    cv2.rectangle(image,(mid_point_x,starting_point_y),(end_point_x,mid_point_y),(100,100,100),2)
+    cv2.rectangle(image,(mid_point_x,mid_point_y),(end_point_x,end_point_y),(100,100,100),2)
+    cv2.rectangle(image,(mid_point_x,mid_point_y),(starting_point_x,end_point_y),(100,100,100),2)
+    cv2.rectangle(image,(175,175),(325,325),(250,0,0),2)
 
     # cv2.line(image, (x,y), (x,y), (255, 0, 0), 5)
-    cv2.rectangle(image,(100,100),(250,250),(100,100,100),2)
-    cv2.rectangle(image,(250,100),(400,250),(100,100,100),2)
-    cv2.rectangle(image,(250,250),(400,400),(100,100,100),2)
-    cv2.rectangle(image,(250,250),(100,400),(100,100,100),2)
-    cv2.rectangle(image,(175,175),(325,325),(250,0,0),2)
+    # cv2.rectangle(image,(100,100),(250,250),(100,100,100),2)
+    # cv2.rectangle(image,(250,100),(400,250),(100,100,100),2)
+    # cv2.rectangle(image,(250,250),(400,400),(100,100,100),2)
+    # cv2.rectangle(image,(250,250),(100,400),(100,100,100),2)
+    # cv2.rectangle(image,(175,175),(325,325),(250,0,0),2)
     
     cv2.line(image, (100,100), (100,100), (0, 255, 0), 5)
     cv2.line(image, (100,250), (100,250), (0, 255, 0), 5)
@@ -237,8 +252,7 @@ def drawSquare(image):
 
     cv2.line(image, (250,250), (250,250), (0, 255, 0), 5)
 
-
-is_blurred = True
+is_blurred = False
 
 #code
 while cap.isOpened():

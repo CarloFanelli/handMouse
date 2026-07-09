@@ -38,5 +38,5 @@ cd hand-tracking-mediapipe
 2. Esegui lo script Python:
 
 ```bash
-python hand_tracking.py
+python hand_recognition.py
 ```
